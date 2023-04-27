@@ -1,7 +1,7 @@
 ---
 title: "Lab 06 - Ugly charts and Simpson's paradox"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Rowan Kemmerly"
+date: "4/27/23"
 output: github_document
 ---
 
@@ -13,19 +13,43 @@ library(dsbox)
 library(mosaicData) 
 ```
 
+```{r load-data}
+staff <- read_csv("data/instructional-staff.csv")
+```
+```{r converting-wide-to-long-format}
+staff_long <- staff %>%
+  pivot_longer(cols = -faculty_type, names_to = "year") %>%
+  mutate(value = as.numeric(value))
+
+staff_long
+```
+
+
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+```{r plotting-as-line-graph-1}
+
+staff_long %>%
+  ggplot(aes(x = year, y = value, color = faculty_type)) +
+  geom_line()
+
+```
+
+```{r plotting-as-line-graph-2}
+
+staff_long %>%
+  ggplot(aes(x = year,
+             y = value,
+             group = faculty_type,
+             color = faculty_type)) +
+  geom_line() + 
+  labs(title = "Instructional staff employement trends", color = "Faculty Type", x = "Year", y = "Number of employees")
+```
+
 
 ### Exercise 2
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+I would create new variables for each of the instructional staff types that represented the proportion of each type out of all of the types combined, and graph that in the same way I did above.
 
 ### Exercise 3
 
