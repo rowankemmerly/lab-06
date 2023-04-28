@@ -132,5 +132,108 @@ ggplot(fisheries_over3mil_nochina, aes(x= country)) +
 I like the low alpha/stacked bar chart look because you can tell based on whether the bar looks more green or blue whether the country does more farming vs. capturing. 
 
 
+## Stretch Practice with Smokers in Whickham
+
+```{r loading-smoker-data}
+
+data(Whickham)
+
+?Whickham
+library(performance)
+performance::compare_performance()
+
+```
+
+### Exercise 1 (Smokers)
+
+Observational, because you can't force people to be smokers for an experiment.
+
+### Exercise 2 (Smokers)
+
+1314 observations, each representing a woman from Whickham. 
+
+### Exercise 3 (Smokers)
+
+3 variables: outcome (dead or alive; discrete), smoker (yes or no; discrete), and age (continuous)
+
+They're all integers in the data set:
+
+```{r checking-variable-type}
+
+
+typeof(Whickham$outcome)
+typeof(Whickham$smoker)
+typeof(Whickham$age)
+
+```
+
+
+```{r display-outcomes}
+Whickham %>%
+ggplot(aes(x = outcome)) +
+  geom_bar()
+```
+
+```{r display-smokers-vs-not}
+Whickham %>%
+ggplot(aes(x = smoker)) +
+  geom_bar()
+```
+
+```{r display-ages}
+Whickham %>%
+ggplot(aes(x = age)) +
+  geom_bar()
+```
+
+
+### Exercise 4 (Smokers)
+
+I'd expect more smokers to be dead than non-smokers, controlling for age.
+
+### Exercise 5 (Smokers)
+
+```{r smoker-outcome-graph}
+Whickham %>%
+  count(smoker, outcome)
+
+    
+ggplot(Whickham, aes(x=smoker, fill=outcome))+
+  geom_bar()+
+  labs(title = "Health outcomes of smokers vs. non-smokers In Whickham, UK",
+       x="smoker?",
+       y="number of individuals")
+```
+So, this shows that more non-smokers (31.4%) are dead than smokers (23.9%). I'm almost certain that this is just because we didn't factor in age at time of study. 
+
+### Exercise 6 (Smokers)
+
+```{r smokers-age-category}
+
+Whickham <- Whickham %>%
+  mutate(age_cat = case_when(age <= 44 ~ "18-44",
+                             age > 44 & age <= 64 ~ "45-64",
+                             age > 64 ~ "65+"))
+
+```
+
+
+### Exercise 7 (Smokers)
+
+
+```{r smoker-outcome-graph-with-age}
+Whickham %>%
+  count(smoker, age_cat, outcome)
+
+    
+ggplot(Whickham, aes(x=smoker, fill=outcome))+
+  geom_bar()+
+  labs(title = "Health outcomes of smokers vs. non-smokers In Whickham, UK",
+       x="smoker?",
+       y="number of individuals") + 
+  facet_wrap (~age_cat)
+```
+
+Now that we've added age everything makes sense. Young people are still alive almost no matter what, and for older individuals a larger proportion of smokers vs. non-smokers have died.
 
 
