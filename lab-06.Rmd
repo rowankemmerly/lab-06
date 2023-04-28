@@ -49,10 +49,88 @@ staff_long %>%
 
 ### Exercise 2
 
-I would create new variables for each of the instructional staff types that represented the proportion of each type out of all of the types combined, and graph that in the same way I did above.
+I would create new variables for each of the instructional staff types that represented the proportion of each type out of all of the types combined, and graph that in the same way I did above (year by proportion)
 
 ### Exercise 3
 
-...
+Here are my first thoughts on what I think they should change:
+1. I think they really need to change the scale and/or cut out even more of the lesser-producing countries.(Is the x axis on the left not even showing all of the country names?)
+2. What to the red and blue mean on the figure on the left? I guess it must be capture vs. aquaculutre, but this isn't clear at first because it's not labeled. 
+3. I don't really think the pie charts on the right are necessary.
 
-Add exercise headings as needed.
+```{r loading-fish-data}
+fisheries <- read_csv("data/fisheries.csv")
+
+```
+
+
+```{r new-fish-plot, fig.height=10, fig.width=17}
+library(ggplot2)
+
+# only keep countries with over 3 million fish captured or farmed in total
+fisheries_over3mil <- fisheries %>% 
+  filter(total > 3000000)
+
+
+# make "country" variable a factor
+
+fisheries_over3mil$country <- as_factor(fisheries_over3mil$country)
+
+#reorder (descending total harvest)
+
+fisheries_over3mil <- fisheries_over3mil %>% 
+  mutate(country = fct_reorder(country, -total))
+
+# plot the data
+
+
+# ggplot(fisheries_over3mil, aes(x= country)) +
+#   geom_area(aes(fill = "captured", y = capture), alpha = 0.5) +
+#   geom_area(aes(fill = "farmed", y = aquaculture), alpha = 0.5) +
+#   scale_fill_manual(values = c("captured" = "#43a2ca", "farmed" = "#a8ddb5")) +
+#   labs(title = "Total fish harvest by country", subtitle = "for countries with the top 13 fishing industries in the world", fill = "Captured vs. farmed", x = "Country", y = "Number of fish captured or farmed") +
+#   theme_classic()
+
+# I realized that geom_area doesn't work with one continuous variable/one discrete variable in ggplot...so trying other plots!
+
+# ggplot(fisheries_over3mil, aes(x= country)) +
+#   geom_point(aes(color = "captured", y = capture), alpha = 0.5) +
+#   geom_point(aes(color = "farmed", y = aquaculture), alpha = 0.5) +
+#   scale_color_manual(values = c("captured" = "#43a2ca", "farmed" = "#a8ddb5")) +
+#   labs(title = "Total fish harvest by country", subtitle = "for countries with the top 13 fishing industries in the world", color = "Captured vs. farmed", x = "Country", y = "Number of fish captured or farmed") +
+#   theme_classic() 
+
+
+ggplot(fisheries_over3mil, aes(x= country)) +
+  geom_col(aes(fill = "captured", y = capture), alpha = 0.5) +
+  geom_col(aes(fill = "farmed", y = aquaculture), alpha = 0.5) +
+  scale_fill_manual(values = c("captured" = "#43a2ca", "farmed" = "#a8ddb5")) +
+  labs(title = "Total fish harvest by country", subtitle = "for countries with the top 13 fishing industries in the world", fill = "Captured vs. farmed", x = "Country", y = "Number of fish captured or farmed") +
+  theme_classic() 
+
+
+```
+
+I'm going to do another plot without China and indonesia so the scale isn't so wonky still.
+
+```{r new-fish-plot-minus-china, fig.height=6, fig.width=11}
+
+fisheries_over3mil_nochina <- fisheries_over3mil %>%
+  filter (total < 20000000)
+
+ggplot(fisheries_over3mil_nochina, aes(x= country)) +
+  geom_col(aes(fill = "captured", y = capture), alpha = 0.5) +
+  geom_col(aes(fill = "farmed", y = aquaculture), alpha = 0.5) +
+  scale_fill_manual(values = c("captured" = "#43a2ca", "farmed" = "#a8ddb5")) +
+  labs(title = "Total fish harvest by country", subtitle = "for countries with the top 11 fishing industries in the world (excluding China and Indonesia)", fill = "Captured vs. farmed", x = "Country", y = "Number of fish captured or farmed") +
+  theme_classic() 
+
+
+```
+
+
+I like the low alpha/stacked bar chart look because you can tell based on whether the bar looks more green or blue whether the country does more farming vs. capturing. 
+
+
+
+
