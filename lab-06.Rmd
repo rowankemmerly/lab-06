@@ -138,9 +138,9 @@ I like the low alpha/stacked bar chart look because you can tell based on whethe
 
 data(Whickham)
 
-?Whickham
-library(performance)
-performance::compare_performance()
+# ?Whickham
+# library(performance)
+# performance::compare_performance()
 
 ```
 
